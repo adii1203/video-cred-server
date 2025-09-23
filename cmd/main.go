@@ -3,6 +3,10 @@ package main
 import (
 	"log"
 
+	"github.com/adii1203/video-cred/internals/handlers"
+	"github.com/adii1203/video-cred/internals/service"
+	"github.com/adii1203/video-cred/internals/storage"
+	"github.com/adii1203/video-cred/pkg"
 	"github.com/gofiber/fiber/v2"
 	"github.com/joho/godotenv"
 )
@@ -12,7 +16,12 @@ func main() {
 	if err != nil {
 		log.Fatal("Error: loading env")
 	}
-	_ = InitDB()
+	db := pkg.InitDB()
+	logger := pkg.NewLogger()
+
+	repo := storage.New(db)
+	user_service := service.NewUserService(repo)
+	user_handler := handlers.NewUserHandler(user_service, logger)
 
 	app := fiber.New(fiber.Config{
 		ReadBufferSize: 16384,            // 16 KB for headers
@@ -24,6 +33,8 @@ func main() {
 			"message": "Hello",
 		})
 	})
+
+	app.Post("/clerk", user_handler.ClerkHandler())
 
 	app.Listen(":8000")
 }
