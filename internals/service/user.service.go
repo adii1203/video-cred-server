@@ -5,6 +5,7 @@ import (
 	"fmt"
 
 	"github.com/adii1203/video-cred/internals/storage"
+	"github.com/jackc/pgx/v5/pgtype"
 )
 
 type UserService struct {
@@ -33,4 +34,17 @@ func (s *UserService) CreateUserWithClerk(ctx context.Context, pramps storage.Cr
 	}
 
 	return nil
+}
+
+func (s *UserService) GetUserById(ctx context.Context, id pgtype.UUID) (storage.User, error) {
+	if err := ctx.Err(); err != nil {
+		return storage.User{}, fmt.Errorf("context error befour user created: %w", err)
+	}
+
+	user, err := s.repo.GetUserById(ctx, id)
+	if err != nil {
+		return storage.User{}, fmt.Errorf("cannot get user: %s", err.Error())
+	}
+
+	return user, nil
 }
