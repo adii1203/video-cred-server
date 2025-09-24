@@ -8,6 +8,14 @@ import (
 	"github.com/jackc/pgx/v5/pgtype"
 )
 
+type Cred struct {
+	ID        pgtype.UUID
+	UserID    pgtype.UUID
+	CredName  string
+	ResumeUrl string
+	VideoUrl  string
+}
+
 type User struct {
 	ID             pgtype.UUID
 	Email          string
