@@ -1,0 +1,1 @@
+ALTER TABLE creds ALTER COLUMN user_id SET NOT NULL;
